@@ -23,19 +23,23 @@ class TaskRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'project_id' => 'required|exists:projects,id',
-        ];
-
-        if ($this->isMethod('POST')) {
-            $rules['status'] = 'required|in:pending,in_progress,completed';
-        } elseif ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['status'] = 'sometimes|in:pending,in_progress,completed';
+        // For PUT/PATCH requests, only allow status updates
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            return [
+                'status' => 'required|in:pending,in_progress,completed',
+            ];
         }
 
-        return $rules;
+        // For POST requests, require all fields
+        return [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,in_progress,completed',
+            'priority' => 'required|in:low,medium,high',
+            'project_id' => 'required|exists:projects,id',
+            'assigned_to' => 'required|exists:users,id',
+            'due_date' => 'required|date|after_or_equal:today',
+        ];
     }
 
     /**
@@ -46,6 +50,7 @@ class TaskRequest extends FormRequest
         return [
             'title.required' => 'The task title is required.',
             'status.in' => 'Status must be one of: pending, in_progress, completed.',
+            'status.required' => 'The status field is required.',
             'priority.in' => 'Priority must be one of: low, medium, high.',
             'project_id.exists' => 'The selected project does not exist.',
             'assigned_to.exists' => 'The selected user does not exist.',

@@ -21,7 +21,7 @@ class ProjectApiTest extends TestCase
             'user_id' => $user->id,
         ];
 
-        $response = $this->postJson('/api/projects', $projectData);
+        $response = $this->postJson('/api/v1/projects', $projectData);
 
         $response->assertStatus(201)
                 ->assertJsonStructure([
@@ -46,7 +46,7 @@ class ProjectApiTest extends TestCase
         $user = User::factory()->create();
         Project::factory()->count(3)->create(['user_id' => $user->id]);
 
-        $response = $this->getJson('/api/projects');
+        $response = $this->getJson('/api/v1/projects');
 
         $response->assertStatus(200)
                 ->assertJsonStructure([

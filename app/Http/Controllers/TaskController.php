@@ -9,28 +9,34 @@ use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $tasks = new TaskCollection(Task::all());
+        if ($request->has('status')) {
+            $tasks = Task::where('status', $request->status)->get();
+        } else {
+            $tasks = Task::all();
+        }
+        $tasks = new TaskCollection($tasks);
         return response()->json($tasks);
     }
 
     public function store(TaskRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Task::create($data);
+        $task = Task::create($data);
 
-        return response()->json($data, 201);
+        return new TaskResource($task)->response()->setStatusCode(201);
     }
 
     public function show(int $id): JsonResponse
     {
         $task = Task::findOrFail($id)->load('project')->load('user');
-        $resource = new TaskResource($task);
-        return response()->json($resource);
+
+        return new TaskResource($task)->response()->setStatusCode(200);
     }
 
     public function update(TaskRequest $request, int $id): JsonResponse

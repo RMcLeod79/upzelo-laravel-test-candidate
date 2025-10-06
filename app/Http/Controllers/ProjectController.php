@@ -24,7 +24,8 @@ class ProjectController extends Controller
     {
         $data = $request->validated();
         $project = Project::create($data);
-        return response()->json($project, 201);
+
+        return new ProjectResource($project)->response()->setStatusCode(201);
     }
 
     public function show(int $id): JsonResponse
@@ -36,9 +37,15 @@ class ProjectController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
+        $project = Project::findOrFail($id);
+        $project->update($request->all());
+        return response()->json($project);
     }
 
     public function destroy(int $id): JsonResponse
     {
+        $project = Project::findOrFail($id);
+        $project->delete();
+        return response()->json([], 204);
     }
 }

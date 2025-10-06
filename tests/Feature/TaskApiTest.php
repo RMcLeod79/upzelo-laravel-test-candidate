@@ -24,10 +24,10 @@ class TaskApiTest extends TestCase
             'priority' => 'high',
             'project_id' => $project->id,
             'assigned_to' => $user->id,
-            'due_date' => '2024-12-31',
+            'due_date' => '2025-12-31',
         ];
 
-        $response = $this->postJson('/api/tasks', $taskData);
+        $response = $this->postJson('/api/v1/tasks', $taskData);
 
         $response->assertStatus(201)
                 ->assertJsonStructure([
@@ -58,7 +58,7 @@ class TaskApiTest extends TestCase
             'status' => 'pending'
         ]);
 
-        $response = $this->putJson("/api/tasks/{$task->id}", [
+        $response = $this->putJson("/api/v1/tasks/{$task->id}", [
             'status' => 'completed',
         ]);
 
@@ -79,7 +79,7 @@ class TaskApiTest extends TestCase
         Task::factory()->create(['project_id' => $project->id, 'status' => 'completed']);
         Task::factory()->create(['project_id' => $project->id, 'status' => 'in_progress']);
 
-        $response = $this->getJson('/api/tasks?status=completed');
+        $response = $this->getJson('/api/v1/tasks?status=completed');
 
         $response->assertStatus(200);
         
