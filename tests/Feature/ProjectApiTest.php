@@ -57,6 +57,7 @@ class ProjectApiTest extends TestCase
                             'name',
                             'description',
                             'tasks_count',
+                            'completion_percentage',
                         ]
                     ]
                 ]);

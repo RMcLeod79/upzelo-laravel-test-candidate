@@ -22,6 +22,7 @@ class ProjectResource extends JsonResource
             'updated_at' => $this->updated_at,
             'tasks_count' => $this->tasks_count,
             'tasks' => TaskResource::collection($this->whenLoaded('tasks')),
+            'completion_percentage' => $this->completion_percentage,
         ];
     }
 }
