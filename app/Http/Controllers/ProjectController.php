@@ -4,28 +4,41 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectRequest;
+use App\Http\Resources\ProjectCollection;
+use App\Http\Resources\ProjectResource;
+use App\Models\Project;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-
+        $projects = Project::with('tasks')->get();
+        $collection = new ProjectCollection($projects);
+        return response()->json($collection);
     }
 
-    public function store(Request $request)
+    public function store(ProjectRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $project = Project::create($data);
+        return response()->json($project, 201);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $project = Project::with('tasks')->findOrFail($id);
+        $resource = new ProjectResource($project);
+        return response()->json($resource);
+    }
+
+    public function update(Request $request, int $id): JsonResponse
     {
     }
 
-    public function show($id)
-    {
-    }
-
-    public function update(Request $request, $id)
-    {
-    }
-
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
     }
 }
