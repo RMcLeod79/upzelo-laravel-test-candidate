@@ -38,7 +38,7 @@ class TaskRequest extends FormRequest
             'priority' => 'required|in:low,medium,high',
             'project_id' => 'required|exists:projects,id',
             'assigned_to' => 'required|exists:users,id',
-            'due_date' => 'required|date|after_or_equal:today',
+            'due_date' => 'nullable|date|after_or_equal:today',
         ];
     }
 
